@@ -1,7 +1,5 @@
 ﻿using System;
 using SteamAccountFinder;
-using Serilog;
-using System.Linq;
 
 namespace SteamAccountsConsole
 {
@@ -9,19 +7,9 @@ namespace SteamAccountsConsole
     {
         static void Main(string[] args)
         {
-            if (args.Contains("debug"))
-			{
-				var loggerConfiguration = new LoggerConfiguration()
-			        .MinimumLevel.Debug()
-			        .WriteTo.Console()
-			        .WriteTo.File("log.txt");
-
-				SteamLibLogger.ConfigureLogger(loggerConfiguration);
-			}
-
+			// Set encoding to UTF8
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
 			PrintSteamAccounts();
-
-            SteamLibLogger.Shutdown();
         }
 
 		private static void PrintSteamAccounts()
