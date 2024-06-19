@@ -1,25 +1,53 @@
 ﻿using System;
+using System.Windows;
 using SteamAccountFinder;
 
 namespace SteamAccountsConsole
 {
     internal class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
-			// Set encoding to UTF8
-			Console.OutputEncoding = System.Text.Encoding.UTF8;
+            // Determine encoding
+            if (Console.OutputEncoding.CodePage != 65001)
+			{
+                MessageBox.Show("Changing console encoding to UTF-8", "Steam Accounts Console", MessageBoxButton.OK, MessageBoxImage.Information);
+				Console.OutputEncoding = System.Text.Encoding.UTF8;
+			}
+
+			// Capturing global exceptions
+			AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+			{
+                MessageBox.Show("Unhandled exception: " + eventArgs.ExceptionObject, "Steam Accounts Console", MessageBoxButton.OK, MessageBoxImage.Error);
+				Console.WriteLine("Unhandled exception: " + eventArgs.ExceptionObject);
+			};
+
+
 			PrintSteamAccounts();
-        }
+
+            Console.ForegroundColor = ConsoleColor.White;
+			Console.Write("\nPress Enter to exit...");
+			Console.ReadLine();
+
+		}
 
 		private static void PrintSteamAccounts()
 		{
+			if (!SteamAccounts.IsSteamInstalled)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Steam is not installed.");
+				return;
+			}
 
 			ulong activeSteamAccount = SteamAccounts.ActiveSteamAccount;
             ulong runningGame = SteamAccounts.RunningGame;
             var allAccounts = SteamAccounts.SteamUsers;
             allAccounts.SortByLatestSource();
 			var steamIds = allAccounts.GetSteamIds();
+
+            
 
 			Console.ForegroundColor = ConsoleColor.Red;
             if (SteamAccounts.IsSteamRunning)
@@ -74,7 +102,10 @@ namespace SteamAccountsConsole
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("\nProfile URL: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(account.ProfileUrl);
+				// Should be clickable link
+				Console.WriteLine(account.ProfileUrl);
+
+
 
 				Console.ForegroundColor = ConsoleColor.Cyan;
 				Console.Write("Sources Count: ");
@@ -92,10 +123,6 @@ namespace SteamAccountsConsole
 				Console.WriteLine(" (" + account.LatestSource.ToString("yyyy-MM-dd HH:mm:ss") + ")");
 
 			}
-
-            Console.ResetColor();
-            Console.Write("\nPress \"Enter\" key to exit...");
-            Console.ReadKey();
         }
     }
 }
