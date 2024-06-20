@@ -7,7 +7,7 @@
   <Var name="ReuseNames" value="false" />
   <Var name="RenameProperties" value="true" />
   <Var name="OptimizeMethods" value="true" />
-  <Var name="KeepPublicApi" value="true" />
+  <Var name="KeepPublicApi" value="false" />
   <Var name="HidePrivateApi" value="true" />
   <Var name="UseKoreanNames" value="true" />
   <Module file="$(InPath)/SteamAccountFinder.dll"/>
