@@ -9,6 +9,7 @@
 - Determine active steam account
 - Running game PID
 - All steam accounts on PC from multiple sources
+- All installed games
 - Information about account such as:
   - Username
   - SteamID64
