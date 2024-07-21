@@ -23,7 +23,7 @@ namespace SteamAccountsConsole
 			// Determine encoding
 			if (Console.OutputEncoding.CodePage != 65001)
 			{
-				Console.OutputEncoding = System.Text.Encoding.UTF8;
+				Console.OutputEncoding = Encoding.UTF8;
 			}
 
 			// Capturing global exceptions
@@ -98,44 +98,51 @@ namespace SteamAccountsConsole
 			foreach (var account in allAccounts)
 			{
 				if (account.Username != null)
-				{
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.Write("\nUsername: ");
-					Console.ForegroundColor = ConsoleColor.White;
-					Console.Write(account.Username);
-				}
-
+{
 				Console.ForegroundColor = ConsoleColor.Cyan;
-				Console.Write("\nSteam ID: ");
+				Console.Write("\nUsername: ");
 				Console.ForegroundColor = ConsoleColor.White;
-				Console.Write(account.SteamId);
-				if (account.IsActive)
-				{
-					Console.ForegroundColor = ConsoleColor.Green;
-					Console.Write(" - Active!");
-				}
+				Console.Write(account.Username);
+			}
 
-				Console.ForegroundColor = ConsoleColor.Cyan;
-				Console.Write("\nProfile URL: ");
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.WriteLine(account.ProfileUrl);
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.Write("\nSteam ID: ");
+			Console.ForegroundColor = ConsoleColor.White;
+			Console.Write(account.SteamId);
+			if (account.IsActive)
+			{
+				Console.ForegroundColor = ConsoleColor.Green;
+				Console.Write(" - Active!");
+			}
+
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.Write("\nProfile URL: ");
+			Console.ForegroundColor = ConsoleColor.White;
+			Console.WriteLine(account.ProfileUrl);
 
 
 
-				Console.ForegroundColor = ConsoleColor.Cyan;
-				Console.Write("Sources Count: ");
-				if (account.SourcesCount > 2)
-				{
-					Console.ForegroundColor = ConsoleColor.White;
-				}
-				else
-				{
-					Console.ForegroundColor = ConsoleColor.Red;
-				}
-				Console.Write(account.SourcesCount);
-				if (account.LatestSource != DateTime.MinValue)
-					Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.Write("Sources Count: ");
+			if (account.SourcesCount > 4)
+			{
+				Console.ForegroundColor = ConsoleColor.Green;
+			}
+			else if (account.SourcesCount > 2)
+			{
+				Console.ForegroundColor = ConsoleColor.Yellow;
+			}
+			else
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+			}
+			Console.Write(account.SourcesCount);
+			if (account.LatestSource != DateTime.MinValue && account.LatestSource  != null)
+			{
+				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine(" (" + account.LatestSource.ToString("yyyy-MM-dd HH:mm:ss") + ")");
+			}
+			Console.WriteLine();
 			}
 		}
 
@@ -171,15 +178,11 @@ namespace SteamAccountsConsole
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine(SteamAccounts.SystemHash);
 			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write("Users: ");
+			Console.Write("SteamUsers: ");
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine(SteamAccounts.SteamUsersHash);
 			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write("Hardware: ");
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine(SteamAccounts.HardwareHash);
-			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write("Applications: ");
+			Console.Write("SteamApps: ");
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine(SteamAccounts.SteamApplicationsHash);
 		}
@@ -201,10 +204,10 @@ namespace SteamAccountsConsole
 [38;2;200;117;141m ██║     ██║██║ ╚████║██████╔╝██████[38;2;202;115;139m█[38;2;208;111;136m╗[38;2;214;107;133m█[38;2;220;103;129m█[38;2;226;99;126m║  [38;2;243;87;116m█[38;2;249;83;113m█[38;2;255;80;110m║[0m
 [38;2;218;105;130m ╚═╝     ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚[38;2;220;103;129m═[38;2;226;99;126m╝  [38;2;243;87;116m╚[38;2;249;83;113m═[38;2;255;80;110m╝[0m
 [0m";
-			if (TerminalApi.EnableVirtualTerminalProcessing())
-			{
-				Console.WriteLine(banner);
-			}
+			//if (TerminalApi.EnableVirtualTerminalProcessing())
+			//{
+			Console.WriteLine(banner);
+			//}
 
 			Console.ForegroundColor = ConsoleColor.Blue;
 			Console.Write("Created by:\t");
@@ -221,35 +224,37 @@ namespace SteamAccountsConsole
 			Console.WriteLine();
 		}
 
-		public static class TerminalApi
-		{
-			private const int STD_OUTPUT_HANDLE = -11;
-			private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-			[DllImport("kernel32.dll", SetLastError = true)]
-			private static extern IntPtr GetStdHandle(int nStdHandle);
+		// This triggering VirusTotal for some reason
+		//public static class TerminalApi
+		//{
+		//	private const int STD_OUTPUT_HANDLE = -11;
+		//	private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-			[DllImport("kernel32.dll", SetLastError = true)]
-			private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+		//	[DllImport("kernel32.dll", SetLastError = true)]
+		//	private static extern IntPtr GetStdHandle(int nStdHandle);
 
-			[DllImport("kernel32.dll", SetLastError = true)]
-			private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+		//	[DllImport("kernel32.dll", SetLastError = true)]
+		//	private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
-			public static bool EnableVirtualTerminalProcessing()
-			{
-				IntPtr handle = GetStdHandle(STD_OUTPUT_HANDLE);
+		//	[DllImport("kernel32.dll", SetLastError = true)]
+		//	private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
-				if (!GetConsoleMode(handle, out uint mode))
-					return false;
+		//	public static bool EnableVirtualTerminalProcessing()
+		//	{
+		//		IntPtr handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-				mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+		//		if (!GetConsoleMode(handle, out uint mode))
+		//			return false;
 
-				if (!SetConsoleMode(handle, mode))
-					return false;
+		//		mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 
-				Console.OutputEncoding = Encoding.UTF8;
-				return true;
-			}
-		}
+		//		if (!SetConsoleMode(handle, mode))
+		//			return false;
+
+		//		Console.OutputEncoding = Encoding.UTF8;
+		//		return true;
+		//	}
+		//}
 	}
 }
