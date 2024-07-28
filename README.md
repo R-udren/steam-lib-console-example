@@ -2,7 +2,7 @@
 
 ### Preview
 
-![Screenshot](https://github.com/R-udren/SteamAccountsConsole/assets/54269637/d0179491-1fa6-428e-bd06-d4f744376386)
+![Screenshot](accounts.png)
 
 ## Features
 
